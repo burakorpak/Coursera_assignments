@@ -1,0 +1,129 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+MAIN_FLASH       0x0000000000000000 0x0000000000040000 xr
+INFO_FLASH       0x0000000000200000 0x0000000000004000 xr
+SRAM_CODE        0x0000000001000000 0x0000000000010000 xrw
+SRAM_DATA        0x0000000020000000 0x0000000000010000 rw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000000000                PROVIDE (_intvecs_base_address = DEFINED (_intvecs_base_address)?_intvecs_base_address:0x0)
+
+.intvecs
+ *(.intvecs)
+                0x0000000000200000                PROVIDE (_mailbox_base_address = 0x200000)
+
+.flashMailbox
+ *(.flashMailbox)
+                0x0000000000201000                PROVIDE (_tlv_base_address = 0x201000)
+
+.tlvTable
+ *(.tlvTable)
+                0x0000000000202000                PROVIDE (_bsl_base_address = 0x202000)
+
+.bslArea
+ *(.bslArea)
+                0x0000000020000000                PROVIDE (_vtable_base_address = DEFINED (_vtable_base_address)?_vtable_base_address:0x20000000)
+
+.vtable
+ *(.vtable)
+
+.text           0x0000000000000000       0xd0
+ CREATE_OBJECT_SYMBOLS
+ *(.text)
+ .text          0x0000000000000000       0xd0 misc.o
+                0x0000000000000000                func
+ *(.text.*)
+                0x00000000000000d0                . = ALIGN (0x4)
+ *(.ctors)
+                0x00000000000000d0                . = ALIGN (0x4)
+ *(.dtors)
+                0x00000000000000d0                . = ALIGN (0x4)
+                0x00000000000000d0                __init_array_start = .
+ *(.init_array*)
+                0x00000000000000d0                __init_array_end = .
+ *(.init)
+ *(.fini*)
+
+.glue_7         0x00000000000000d0        0x0
+ .glue_7        0x00000000000000d0        0x0 linker stubs
+
+.glue_7t        0x00000000000000d0        0x0
+ .glue_7t       0x00000000000000d0        0x0 linker stubs
+
+.vfp11_veneer   0x00000000000000d0        0x0
+ .vfp11_veneer  0x00000000000000d0        0x0 linker stubs
+
+.v4_bx          0x00000000000000d0        0x0
+ .v4_bx         0x00000000000000d0        0x0 linker stubs
+
+.iplt           0x00000000000000d0        0x0
+ .iplt          0x00000000000000d0        0x0 misc.o
+
+.rodata         0x00000000000000d0        0xe
+ *(.rodata)
+ .rodata        0x00000000000000d0        0xe misc.o
+ *(.rodata.*)
+
+.rel.dyn        0x00000000000000e0        0x0
+ .rel.iplt      0x00000000000000e0        0x0 misc.o
+
+.ARM.exidx      0x00000000000000de        0x0
+                0x00000000000000de                __exidx_start = .
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x00000000000000de                __exidx_end = .
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+                0x00000000000000de                __etext = .
+
+.data           0x0000000020000000       0x28 load address 0x00000000000000de
+                0x00000000000000de                __data_load__ = LOADADDR (.data)
+                0x0000000020000000                __data_start__ = .
+ *(.data)
+ .data          0x0000000020000000       0x28 misc.o
+                0x0000000020000000                g5
+ *(.data*)
+                0x0000000020000028                . = ALIGN (0x4)
+                0x0000000020000028                __data_end__ = .
+
+.igot.plt       0x0000000020000028        0x0 load address 0x0000000000000106
+ .igot.plt      0x0000000020000028        0x0 misc.o
+
+.bss            0x0000000020000028        0x4
+                0x0000000020000028                __bss_start__ = .
+ *(.shbss)
+ *(.bss)
+ .bss           0x0000000020000028        0x4 misc.o
+ *(.bss.*)
+ *(COMMON)
+                0x000000002000002c                . = ALIGN (0x4)
+                0x000000002000002c                __bss_end__ = .
+
+.heap           0x000000002000002c        0x0
+                0x000000002000002c                __heap_start__ = .
+                0x000000002000002c                end = __heap_start__
+                0x000000002000002c                _end = end
+                0x000000002000002c                __end = end
+ *(.heap)
+                0x000000002000002c                __heap_end__ = .
+                0x000000002000002c                __HeapLimit = __heap_end__
+
+.stack          0x0000000020000030        0x0
+                0x0000000020000030                _stack = .
+                0x0000000020000030                __stack = .
+ *(.stack)
+LOAD misc.o
+OUTPUT(main.o elf32-littlearm)
+
+.comment        0x0000000000000000       0x57
+ .comment       0x0000000000000000       0x57 misc.o
+                                         0x58 (size before relaxing)
+
+.ARM.attributes
+                0x0000000000000000       0x30
+ .ARM.attributes
+                0x0000000000000000       0x30 misc.o
